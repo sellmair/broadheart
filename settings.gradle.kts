@@ -8,13 +8,12 @@ pluginManagement {
     }
 
     plugins {
-        id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+        id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-
         mavenCentral()
         google {
             mavenContent {
@@ -48,3 +47,4 @@ include(":models")
 include(":utils")
 include(":bluetooth")
 include(":spoof-tool")
+include(":shared-ui")

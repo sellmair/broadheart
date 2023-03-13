@@ -1,41 +1,40 @@
-@file:Suppress("OPT_IN_USAGE_FUTURE_ERROR", "UnstableApiUsage", "OPT_IN_USAGE")
-@file:OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+@file:Suppress("OPT_IN_USAGE_FUTURE_ERROR", "UnstableApiUsage")
 
 plugins {
     id("kmp-application-conventions")
     kotlin("plugin.serialization")
-    id("org.jetbrains.compose")
 }
 
 android {
     namespace = "io.sellmair.broadheart"
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.3"
+//        kotlinCompilerExtensionVersion = "1.4.3-dev-k1.8.20-Beta-15b4f4328eb"
+    }
 }
 
 kotlin {
     sourceSets.commonMain.get().dependencies {
-        api(project(":models"))
-        api(project(":utils"))
-        api(project(":bluetooth"))
-
-        /* COMPOSE */
-        implementation(compose.ui)
-        implementation(compose.foundation)
-        implementation(compose.material)
-        implementation(compose.runtime)
-
-        implementation(compose.material3)
-        implementation(compose.materialIconsExtended)
-
-        /* Utils */
+        implementation(project(":models"))
+        implementation(project(":utils"))
+        implementation(project(":bluetooth"))
+        implementation(project(":shared-ui"))
         implementation(Dependencies.coroutinesCore)
         implementation(Dependencies.okio)
     }
 
     sourceSets.androidMain.get().dependencies {
         /* androidx */
+        implementation(platform("androidx.compose:compose-bom:2022.12.00"))
         implementation("androidx.activity:activity-compose:1.7.0-rc01")
+        implementation("androidx.compose.material3:material3")
         implementation("androidx.compose.ui:ui-tooling-preview:1.3.3")
+        implementation("androidx.compose.material:material-icons-extended:1.3.1")
 
         /* Polar SDK and dependencies */
         implementation("com.github.polarofficial:polar-ble-sdk:4.0.0")
@@ -49,37 +48,24 @@ kotlin {
 
     sourceSets.invokeWhenCreated("androidDebug") {
         dependencies {
-            implementation("androidx.compose.ui:ui-tooling:1.3.3")
-            implementation("androidx.compose.ui:ui-test-manifest:1.3.3")
+            implementation("androidx.compose.ui:ui-tooling")
+            implementation("androidx.compose.ui:ui-test-manifest")
         }
     }
 
     sourceSets.androidInstrumentedTest.get().dependencies {
+        implementation(platform("androidx.compose:compose-bom:2022.12.00"))
         implementation("androidx.compose.ui:ui-test-junit4")
     }
 
-
-    /* Setup frameworks for iOS */
-    targets.withType<KotlinNativeTarget>().all {
-        if (konanTarget.family.isAppleFamily) {
-
-
-            binaries.framework {
-                export(project(":models"))
-                export(project(":bluetooth"))
-                export(project(":utils"))
-
+    /* Requried for 1.8.20-Beta */
+    android().compilations.all {
+        kotlinOptions {
+            kotlinOptions {
                 freeCompilerArgs += listOf(
-                    "-linker-option", "-framework", "-linker-option", "Metal",
-                    "-linker-option", "-framework", "-linker-option", "CoreText",
-                    "-linker-option", "-framework", "-linker-option", "CoreGraphics",
-                    "-Xdisable-phases=VerifyBitcode"
+                    "-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
                 )
-
-                transitiveExport = true
-                isStatic = true
             }
         }
     }
 }
-

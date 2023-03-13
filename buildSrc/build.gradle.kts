@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.compose:compose-gradle-plugin:1.3.1")
-    implementation(kotlin("gradle-plugin:1.8.10"))
+    implementation("org.jetbrains.compose:compose-gradle-plugin:1.4.0-alpha01-dev972")
+    implementation(kotlin("gradle-plugin:1.8.0"))
     implementation("com.android.tools.build:gradle:7.4.1")
 }

@@ -31,6 +31,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
+import shared.ui.*
 
 
 class MainActivity : ComponentActivity(), CoroutineScope {
@@ -90,6 +91,9 @@ class MainActivity : ComponentActivity(), CoroutineScope {
                         groupService = mainServiceConnection.groupService.value ?: return@AnimatedVisibility,
                         onBack = { route = Route.MainPage }
                     )
+                }
+                Box(Modifier.background(Color.White)) {
+                    SharedAndroidUI()
                 }
             }
         }
